@@ -10,14 +10,14 @@ exports.RegisterUser = async (req,res) => {
   try {
     const { username, password } = req.body
     const finduser = await connections.findOne({ username })
-    // console.log(finduser)
+    
     if (finduser) {
       return res.status(404).json({
-        message: 'user exisits'
+        message: 'user exisit'
       })
     }
     const result = await bycrypt.genSalt(10)
-    // console.log(result)
+    
     const hashpassword = await bycrypt.hash(password, result)
     const createuser = await connections.create({ username, password: hashpassword})
     await createuser.save()
@@ -39,7 +39,7 @@ const generateToken = async (user) => {
 
 exports.UserLogin = async (req, res) => {
   try {
-    // console.log(req.body)
+   
     const { username, password } = req.body
     if (!username && !password) {
       return res.status(404).json({
@@ -48,7 +48,7 @@ exports.UserLogin = async (req, res) => {
     }
 
     const user = await connections.findOne({ username: username })
-    //  console.log(user)
+  
     if (!user) {
       return res.status(500).json({
         message: 'user not found'
@@ -114,4 +114,7 @@ exports.VerfiyOTP = async (req, res) => {
   } catch (error) {
     res.status(400).json({ error: error.message })
   }
+}
+exports.testing=async(req,res)=>{
+  res.json({message:"hello"})
 }

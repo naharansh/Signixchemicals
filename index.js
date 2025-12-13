@@ -4,8 +4,10 @@ var cookieParser = require('cookie-parser')
 const app=express()
 app.use(cookieParser())
 const routes=require('./routers/routes.js')
+const dashboard=require("./routers/dashboardrouts.js")
 const connections=require('./config/connection.js')
 app.use(express.json())
+app.use("/dashboard",dashboard );
 app.use('/api/',routes)
 connections()
 app.listen(process.env.PORT,()=>{
