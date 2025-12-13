@@ -1,0 +1,13 @@
+const express=require('express')
+const dotenv=require('dotenv').config({path:'./config/config.env'})
+var cookieParser = require('cookie-parser')
+const app=express()
+app.use(cookieParser())
+const routes=require('./routers/routes.js')
+const connections=require('./config/connection.js')
+app.use(express.json())
+app.use('/api/',routes)
+connections()
+app.listen(process.env.PORT,()=>{
+    console.log('server is started at 8080')
+})
