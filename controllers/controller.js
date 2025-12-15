@@ -8,9 +8,9 @@ const generatesOTP = () => {
 }
 exports.RegisterUser = async (req,res) => {
   try {
-    const { username, password } = req.body
+    const { username, password,email } = req.body
     const finduser = await connections.findOne({ username })
-    
+    console.log(finduser)
     if (finduser) {
       return res.status(404).json({
         message: 'user exisit'
@@ -19,13 +19,13 @@ exports.RegisterUser = async (req,res) => {
     const result = await bycrypt.genSalt(10)
     
     const hashpassword = await bycrypt.hash(password, result)
-    const createuser = await connections.create({ username, password: hashpassword})
+    const createuser = await connections.create({ username, password: hashpassword,email})
     await createuser.save()
     res.status(200).json({
       message: 'user is created'
     })
   } catch (error) {
-    res.status(200).json({
+    res.status(505).json({
       message: 'failed to create user',
       error
     })
@@ -78,19 +78,28 @@ exports.UserLogin = async (req, res) => {
       user
     })
   } catch (error) {
-    console.log(error)
+    res.status(505).json({
+      message:'some error is occured',
+      error:error.message
+    })
   }
 }
 
 exports.VerfiyOTP = async (req, res) => {
   try {
-    console.log("dfslhfd")
+   
     const { username, otp } = req.body
     const user = await connections.findOne({ username })
-    console.log(user)
+   
     if (!user) {
       res.status(404).json({
         message: 'user does not found'
+      })
+    }
+    if (user.otp == undefined )
+    {
+      return res.status(404).json({
+        message:'otp is required'
       })
     }
      if (!user || user.otp !== otp || user.otpExpiry < Date.now()) {
@@ -101,7 +110,7 @@ exports.VerfiyOTP = async (req, res) => {
   user.otp_expiry = undefined;
    await user.save();
  const token = await generateToken(user)
-    console.log(token)
+  
     res.cookie("token", token, {
       httpOnly: true,
       secure: true,
