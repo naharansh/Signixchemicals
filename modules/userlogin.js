@@ -1,41 +1,68 @@
-const mongoose=require('mongoose')
-const data=mongoose.Schema({
-    username:{
-        type:String,
-        unique:true,
+const mongoose = require('mongoose');
+const { Schema } = require('mongoose');
+const { v4: uuidv4 } = require('uuid');
 
+const userTable = new Schema({
+    _id: {
+        type: String,
+        default: uuidv4,
+        unique: true
     },
-    password:{
-        type:String,
-        unique:true,
+    name: {
+        type: String,
+        required: true,
+        trim: true,
+        minlength: 2
     },
-    email:{
-        type:String,
-        unique:true
-
+    email: {
+        type: String,
+        unique: true,
+        required: true,
+        true: true,
+        index: true
     },
-    status:
-    {
-        type:String,
-        enum:['active','disabled'],
-        default:'active'
+    phone: {
+        type: String,
+        trim: true,
     },
-    role:{
-        type:String,
-        enum:['admin','user'],
-        default:'user'
+    status: {
+        type: String,
+        enum: ["active", "inactive"],
+        default: "active"
     },
-    last_login:{
-        type:Date,
-        default:undefined
+    password: {
+        type: String,
+        required: true,
+        minlength: 6
     },
-    otp:{
-        type:String,
-        default:undefined
-    } ,
-    otp_expiry :{
-        type:Date,
-        default:undefined
+    role_id: {
+        type: String,        
+        required: true,
+        index: true,
+        ref: 'Role'     
+    },
+    department:{
+         type: String,        
+        required: true,
+        index: true,
+        ref: 'Departments'  
+    }, 
+    last_login: {
+        type: Date,
+        default: undefined
+    },
+    otp: {
+        type: String,
+        default: undefined
+    },
+    otp_expiry: {
+        type: Date,
+        default: undefined
     }
+
+}, {
+    timestamps: true,
+    versionKey: false,
+    _id: false 
 })
-module.exports=mongoose.model('login_table',data)
+module.exports=mongoose.model('users',userTable)
