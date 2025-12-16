@@ -25,7 +25,12 @@ const payments = new Schema({
         type: String,
         enum: ["Paid", "Pending"],
         
-    }
+    },
+      order_id: {
+      type: String,
+      ref: "Order",
+      required: true
+    },
 }, {
     timestamps: false
 })
