@@ -1,4 +1,5 @@
 const connections = require('../modules/userlogin.js')
+// const roles=require('../')
 const bycrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
 const generatesOTP = () => {
@@ -14,15 +15,16 @@ const generateToken = async (user) => {
 
 exports.RegisterUser = async (req,res) => {
   try {
-    console.log("DFSDF")
+
     const {  password,email,name,phone,role_id,department } = req.body
     const finduser = await connections.findOne({ email })
-    console.log(finduser)
+   
     if (finduser) {
       return res.status(404).json({
         message: 'user exisit'
       })
     }
+    
     const result = await bycrypt.genSalt(10)
     
     const hashpassword = await bycrypt.hash(password, result)

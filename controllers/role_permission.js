@@ -1,10 +1,18 @@
 const permissions=require('../modules/rolePermission.js')
+const permission=require('../modules/permissions.js')
+const roles=require('../modules/roles.js')
 exports.CretePermission=async (req,res) => {
         try {
             const {role_id,permission_id}=req.body
             if(!role_id || !permission_id)
             {
                 return res.status(404).json({message:'role_id or permission_id are empty'})
+            }
+            const ids=await permission.findById(permission_id)
+            const roleid=await roles.findById(role_id)
+            if(!role_id && !ids)
+            {
+                res.status(404).json({message:'fields are not exist'})
             }
             const result=await permissions.create({role_id,permission_id})
             console.log(result)

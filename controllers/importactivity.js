@@ -1,10 +1,18 @@
 const modules = require('../modules/importactivity')
+const users = require('../modules/userlogin.js')
 exports.CreatePermission = async (req, res) => {
     try {
 
         const { file_name, imported_by, total_records, created_at } = req.body
         if (!file_name || !imported_by || !total_records) {
             return res.status(404).json({ message: 'fields is required' })
+        }
+        const user = await users.findById(imported_by)
+        if (!user) {
+            res.status(500).json({
+                message: 'user does not exist',
+               
+            })
         }
         const result = await modules.create({ file_name, imported_by, total_records, created_at })
         res.status(200).json({
@@ -50,7 +58,7 @@ exports.GetPermission = async (req, res) => {
         }
         res.status(200).json({
             message: 'your history is found',
-           userHistory
+            userHistory
         })
     } catch (error) {
         return res.status(500).json({
@@ -98,7 +106,7 @@ exports.UpdatePermission = async (req, res) => {
             context: "query"
         }
         )
-        
+
         return res.status(200).json({ message: 'history is updated', updatehistory })
     } catch (error) {
         return res.status(500).json({ message: 'some error is occured', err: error.message })

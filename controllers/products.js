@@ -1,85 +1,98 @@
-const models = require('../modules/roles.js')
-exports.CreateRoles = async (req, res) => {
+const modules=require('../modules/product.js')
+const categories=require('../modules/categories.js')
+exports.CreateProduct=async (req,res) => {
     try {
-        const { category_id, product_name,price,gst,stock,status } = req.body
-        
-        const createrole = await models.create({ category_id, product_name,price,gst,stock,status })
-        await createrole.save()
-        res.status(201).json({
-            message: 'role is created',
-            createrole
-        })
-    } catch (error) {
-        return res.status(500).json({ message: 'some error occured', err: error.message })
-    }
-}
-exports.GetALLRoles = async (req, res) => {
-    try {
-        const result = await models.find()
-        if (result.length === 0) {
-            return res.status(404).json({ message: 'role does not exist in the database' })
-        }
-        res.status(200).json({
-            result
-        })
-    } catch (error) {
-        return res.status(500).json({ message: 'some error is occured', err: error.message })
-    }
-}
-exports.GetSingleRoles = async (req, res) => {
-    try {
-        const { id } = req.params
-        console.log(id)
-        if (!id) {
-            return res.status(404).json({ message: 'id does not exist' })
-        }
+                console.log(req.body)
+        const{category_id,product_name,price,gst,stock}=req.body
 
-        const result = await models.findById(id)
-        if (!result) {
-            return res.status(404).json({ message: 'role does not exist in the database' })
+        if(!category_id||!product_name||!price||!gst||!stock)
+        {
+            return res.status(404).json({message:'fields are requried'})
         }
-        res.status(200).json({
-            result
-        })
+        const result=await categories.findById(category_id)
+        if(!result)
+        {
+            return res.status(404).json({message:'category does not exist '})
+        }
+        const data= await modules.create({category_id,product_name,price,gst,stock})
+        res.status(200).json({message:'the product is created',data})
+
     } catch (error) {
-        return res.status(500).json({ message: 'some error is occured', err: error.message })
+        res.status(500).json({message:'some error is occured',err:error.message})
     }
 }
-exports.DeleteRoles = async (req, res) => {
+exports.GetProducts=async (req,res) => {
     try {
-        const { id } = req.params
-        if (!id) {
-            return res.status(404).json({ message: 'id does not exist ' })
-        }
-        const result = await models.findByIdAndDelete(id)
-        if (!result) {
-            return res.status(404).json({ message: 'role does not exist' })
-        }
-        res.status(200).json({
-            message: 'user is deleted'
-        })
+      const result=await modules.find().populate('category_id')
+      if(result.length === 0)
+      {
+        return res.status(404).json({message:'products does not exist'})
+      }
+      res.status(200).json({message:'all products are',result})
+
     } catch (error) {
-        return res.status(404).json({ message: 'some error is occured', err: error.message })
+        res.status(500).json({message:'some error is occured',err:error.message})
     }
 }
-exports.UpdateRoles = async (req, res) => {
+exports.GetProduct=async (req,res) => {
     try {
-        const id = req.params.id
+        const {id}=req.params;
         if (!id) {
-            return res.status(404).json({ message: 'id does not exist ' })
+            return res.status(404).json({id:'id does not exist in the database'})
         }
-        const result = await models.findById(id)
-        if (!result) {
-            return res.status(404).json({ message: 'role does not exist' })
-        }
-        const updaterole = await models.findByIdAndUpdate(id, req.body, {
-            new: true,              // return updated document
-            runValidators: true,    // 🔑 enforce schema validations
-            context: "query"        // ensures proper validation for certain validators
-        }
-        )
-         return res.status(200).json({ message: 'role is updated',updaterole })
+      const result=await modules.findById(id).populate('category_id')
+      if (!result) {
+       return res.status(404).json({message:'products does not exist'})
+      }
+      res.status(200).json({message:'the product is ',result})
+
     } catch (error) {
-        return res.status(500).json({ message: 'some error is occured', err: error.message })
+        res.status(500).json({message:'some error is occured',err:error.message})
+    }
+}
+exports.UpdateProduct=async (req,res) => {
+    try {
+        const {id}=req.params;
+        if (!id) {
+            return res.status(404).json({id:'id does not exist in the database'})
+        }
+      const result=await modules.findById(id)
+      if (!id) {
+       return res.status(404).json({message:'products does not exist'})
+      }
+      const data=await modules.findByIdAndUpdate(id,req.body,{
+        new:true,
+        runValidators:true,
+        context:'query'
+      })
+      if(!data)
+      {
+        return res.status(404).json({message:'data cannot be updated'})
+      }
+      res.status(200).json({message:'the updated product is ',data})
+
+    } catch (error) {
+        res.status(500).json({message:'some error is occured',err:error.message})
+    }
+}
+exports.DeleteProduct=async (req,res) => {
+    try {
+        const {id}=req.params;
+        if (!id) {
+            return res.status(404).json({id:'id does not exist in the database'})
+        }
+      const result=await modules.findById(id)
+      if (!id) {
+       return res.status(404).json({message:'products does not exist'})
+      }
+      const data=await modules.findByIdAndDelete(id)
+      if(!data)
+      {
+          return res.status(404).json({message:'products cannot be updated'})
+      }
+      res.status(200).json({message:'the product is deleted '})
+
+    } catch (error) {
+        res.status(500).json({message:'some error is occured',err:error.message})
     }
 }

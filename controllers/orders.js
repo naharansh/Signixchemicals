@@ -1,13 +1,20 @@
 const orders = require('../modules/order.js')
+const users=require('../modules/userlogin.js')
 exports.Createorders = async (req, res) => {
     try {
         const { lead_id, total_amount, order_number, created_by } = req.body
         if (!lead_id || !total_amount || !order_number || !created_by) {
             return res.status(404).json({ message: "values are required" })
         }
+
         const result = await orders.findOne({ order_number });
         if (result) {
             res.status(404).json({ message: 'order_number is exist in the database' })
+        }
+        const byuser=await users.findById(created_by)
+        if(!byuser)
+        {
+            res.status(404).json({ message: 'user does not exist' })
         }
         const create_order = await orders.create({ lead_id, total_amount, order_number, created_by })
         res.status(201).json({

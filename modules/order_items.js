@@ -27,6 +27,12 @@ const order_item = new Schema({
     required: true,
     ref: 'orders',
     
+  },
+    product_id: {
+    type: String,
+    required: true,
+    ref: 'Product',
+    
   }
 }, {
   timestamps: false

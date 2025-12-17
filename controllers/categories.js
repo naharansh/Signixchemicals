@@ -10,7 +10,7 @@ exports.CreateCategories = async (req, res) => {
             return res.status(404).json({ message: 'category exist' })
         }
         const result = await modules.create({ category_name, description })
-        res.status(200).json({ message: 'category is created', result })
+        res.status(201).json({ message: 'category is created', result })
     } catch (error) {
         res.staus(500).json({ message: 'some error is occured', err: error.message })
     }

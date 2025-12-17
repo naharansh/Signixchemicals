@@ -1,13 +1,23 @@
 const modules = require('../modules/order_items')
+const product = require('../modules/product')
+const orders = require('../modules/order')
+
 exports.CreatePermission = async (req, res) => {
     try {
-        console.log(req.body)
-        const { price, quantity, gst, order_id } = req.body
-        if (!price || !quantity || !gst || !order_id) {
+    //    console.log(product_id.)
+        const { price, quantity, gst, order_id, product_id } = req.body
+        if (!price || !quantity || !gst || !order_id || !product_id) {
             return res.status(404).json({ message: 'fields is required' })
         }
-
-        const result = await modules.create({ price, quantity, gst, order_id })
+        const orderss = await orders.findById(order_id)
+        const products = await product.findById(product_id)
+        if (!orderss) {
+            return res.status(404).json({ message: 'orders does not exist' })
+        }
+        if (!products) {
+            return res.status(404).json({ message: 'products does not exist' })
+        }
+        const result = await modules.create({ price, quantity, gst, order_id,product_id })
         res.status(200).json({
             message: 'data is inserted',
             result
@@ -99,8 +109,8 @@ exports.UpdatePermission = async (req, res) => {
             context: "query"
         }
         )
-        
-        return res.status(200).json({ message: 'order_item is updated',updateorder_item })
+
+        return res.status(200).json({ message: 'order_item is updated', updateorder_item })
     } catch (error) {
         return res.status(500).json({ message: 'some error is occured', err: error.message })
     }

@@ -1,10 +1,16 @@
 const leads=require('../modules/lead')
+const user=require('../modules/userlogin')
 exports.CreateLeads=async (req,res) => {
     try {
         const {name,email,phone,source,assigned_to,created_by}=req.body
         if(!name||!email||!phone||!source||!assigned_to||!created_by)
         {
             return res.status(404).json({message:'All valeues are required'})
+        }
+        const data=await user.findById(assigned_to)
+        if(!data)
+        {
+            return res.status(404).json({message:'user does not exist'})
         }
         const result=await leads.create({name:name,email:email,phone:phone,source:source,assigned_to:assigned_to,created_by:created_by})
        res.status(201).json({message:'lead is  generated',

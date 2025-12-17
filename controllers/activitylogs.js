@@ -1,9 +1,15 @@
 const modules = require('../modules/activity_logs.js')
+const isurser=require('../modules/userlogin.js')
 exports.CreateUser = async (req, res) => {
     try {
         const { user_id, action, module } = req.body
         if (!user_id || !action || !module) {
             return res.status(404).json({ message: 'fields are required' })
+        }
+        const data=await isurser.findById(user_id)
+        if(!data)
+        {
+             res.status(404).json({ message: 'user does not exist' })
         }
         const result = await modules.create({ user_id, action, module })
         res.status(201).json({ message: 'activity_log is created', result })
