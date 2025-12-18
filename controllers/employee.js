@@ -1,4 +1,6 @@
 const modules=require('../modules/employee')
+const employee=require('../modules/dealers.js')
+const depart=require('../modules/department.js')
 const { validate: isUUID } = require("uuid");
 exports.CreateEmployee=async (req,res) => {
     try {
@@ -6,6 +8,16 @@ exports.CreateEmployee=async (req,res) => {
         if(!name||!email||!phone||!dealer_id||!department_id)
         {
             return res.status(404).json({message:'fields are requried'})
+        }
+        const fdepart=await depart.findById(department_id)
+        if(!fdepart)
+        {
+            return res.status(404).json({message:'department does not find'})
+        }
+         const fdelear=await employee.findById(dealer_id)
+        if(!fdelear)
+        {
+            return res.status(404).json({message:'delear  does not find'})
         }
         const  exist= await  modules.findOne({name})
         if(exist)

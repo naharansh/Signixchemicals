@@ -22,6 +22,8 @@ const departments=require('./routers/departement.js')
 const employees=require('./routers/employee.js')
 const task=require('./routers/task.js')
 const assignment=require('./routers/assignment.js')
+const daily_summery=require('./routers/daily_summery.js')
+const task_update=require('./routers/task_updates.js')
 app.use(express.json())
 app.use('/api/', routes)
 app.use("/roleapi/", roles);
@@ -40,6 +42,8 @@ app.use('/dealers/',dealers)
 app.use('/department/',departments)
 app.use('/employee/',employees,task)
 app.use('/assignments/',assignment)
+app.use('/daily_summery/',daily_summery)
+app.use('/tasks_updates/',task_update)
 connections()
 
 app.listen(process.env.PORT, () => {

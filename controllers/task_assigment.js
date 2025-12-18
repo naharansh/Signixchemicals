@@ -1,4 +1,7 @@
 const modules = require('../modules/task_assignments.js')
+const emp=require('../modules/employee.js')
+const depart=require('../modules/department.js')
+const task=require('../modules/task.js')
 const { validate: isUUID } = require("uuid");
 exports.CreateAssignment = async (req, res) => {
     try {
@@ -7,7 +10,21 @@ exports.CreateAssignment = async (req, res) => {
         if (!task_id|| !employee_id||!department_id||!completion_percentage||!completed_at) {
             return res.status(404).json({ message: 'fields are empty' })
         }
-
+        const fenmployee=await emp.findById(employee_id)
+        if(!fenmployee)
+        {
+            return res.status(404).json({message:'employee does not found'})
+        }
+        const fdepartment=await depart.findById(department_id)
+        if(!fdepartment)
+        {
+             return res.status(404).json({message:'department does not found'})
+        }
+        const ftask=await task.findById(task_id)
+        if(!ftask)
+        {
+            return res.status(404).json({message:'task does not found'})
+        }
         const result = await modules.create({ task_id, employee_id,department_id, completion_percentage, completed_at })
         res.status(200).json({ message: 'assignment  is created', result })
     } catch (error) {

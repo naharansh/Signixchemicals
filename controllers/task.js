@@ -1,12 +1,18 @@
 const modules = require('../modules/task.js')
+const dealers=require('../modules/dealers.js')
 const { validate: isUUID } = require("uuid");
 exports.CreateTask = async (req, res) => {
     try {
-        const { title, description, start_date, due_date, status,created_by } = req.body
-        if (!title || !start_date || !due_date || !status) {
+        const { title, description, start_date, due_date, status,created_by,dealer_id } = req.body
+        if (!title || !start_date || !due_date || !created_by||!dealer_id) {
             return res.status(404).json({ message: 'fields are empty' })
         }
-        const result = await modules.create({ title, description, start_date, due_date, status,created_by })
+        const fdeal=await dealers.findById(dealer_id)
+        if(!fdeal)
+        {
+             res.status(404).json({ message: 'dealer is not found', result })
+        }
+        const result = await modules.create({ title, description, start_date, due_date, status,created_by,dealer_id  })
         res.status(200).json({ message: 'result  is created', result })
     } catch (error) {
         res.status(500).json({ message: 'some error is occured', error: error.message })
