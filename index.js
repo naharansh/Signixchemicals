@@ -3,6 +3,7 @@ const dotenv = require('dotenv').config({ path: './config/config.env' })
 var cookieParser = require('cookie-parser')
 const app = express()
 app.use(cookieParser())
+// routes called
 const routes = require('./routers/routes.js')
 const roles = require("./routers/roles.js")
 const rolespermission = require("./routers/role_permission.js")
@@ -24,9 +25,14 @@ const task=require('./routers/task.js')
 const assignment=require('./routers/assignment.js')
 const daily_summery=require('./routers/daily_summery.js')
 const task_update=require('./routers/task_updates.js')
+const emps=require('./routers/employees.js')
+// ================= Employee Management Tables=====
+const role=require('./routers/role.js')
+const e_department=require('./routers/e_department.js')
 app.use(express.json())
+// API EndPoints
 app.use('/api/', routes)
-app.use("/roleapi/", roles);
+app.use("/roleapi/", role);
 app.use('/permissionroute/', permissions)
 app.use('/rolePermission/', rolespermission)
 app.use('/groupapi/', groups)
@@ -44,8 +50,14 @@ app.use('/employee/',employees,task)
 app.use('/assignments/',assignment)
 app.use('/daily_summery/',daily_summery)
 app.use('/tasks_updates/',task_update)
-connections()
+ // ================= Employee Management Tables=====
+ app.use("/role/", roles);
+ app.use("/e_departemnt/",e_department)
+ app.use('/emp/',emps)
 
+// connections
+connections()
+// Server
 app.listen(process.env.PORT, () => {
     console.log('server is started at 8080')
 })

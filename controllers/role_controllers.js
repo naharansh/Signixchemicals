@@ -1,18 +1,23 @@
 const models = require('../modules/roles.js')
 exports.CreateRoles = async (req, res) => {
     try {
+        console.log("SDFsdf")
         const { role_name, description } = req.body
         const result = await models.findOne({ role_name })
+        
         if (result) {
             return res.status(404).json({ message: 'role exist in the databaase', id: result._id })
         }
+        
         const createrole = await models.create({ role_name, description })
+        console.log(createrole)
         await createrole.save()
         res.status(201).json({
             message: 'role is created',
             createrole
         })
     } catch (error) {
+        // console.log(error)
         return res.status(500).json({ message: 'some error occured', err: error.message })
     }
 }
