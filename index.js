@@ -40,6 +40,12 @@ const document=require('./routers/employee_document.js')
 const leave=require('./routers/leave_request.js')
 const leave_balence=require('./routers/leave_balence.js')
 const leave_type=require('./routers/leave_types.js')
+// ========================= Attendence Management Tables
+const attendance=require('./routers/attendence.js')
+const assignment_logs = require('./routers/attenend_logs.js')
+//============================= Optional Supporting Tables
+const optional=require('./routers/employee_locations.js')
+const optionals=require('./routers/attendence_exports.js')
 app.use(express.json())
 // API EndPoints
 app.use('/api/', routes)
@@ -70,6 +76,12 @@ app.use('/document/',document)
 app.use('/leave/',leave)
 app.use('/leave_balence/',leave_balence)
 app.use('/leave_types/',leave_type)
+// ========================= Attendence Management Tables
+app.use('/attendance/',attendance)
+app.use('/attendence_logs/',assignment_logs)
+//============================= Optional Supporting Tables
+app.use('/employee_location/',optional)
+app.use('/employee_exports/',optionals)
 // connections
 connections()
 // Server

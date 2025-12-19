@@ -74,7 +74,7 @@ exports.GetEmployeeDocumentById = async (req, res) => {
 exports.DeleteEmployeeDocument = async (req, res) => {
   try {
     const { id } = req.params;
-    console.log("ds")
+
     if (!id || !isUUID(id)) {
       return res.status(400).json({
         message: "Invalid department UUID"
@@ -88,7 +88,7 @@ exports.DeleteEmployeeDocument = async (req, res) => {
 
     if (deletedocument.file_path) {
       const filePath = path.join(__dirname, '..', 'uploads', document.file_path);
-      console.log(filePath)
+
       fs.unlink(filePath, (err) => {
         if (err) {
           throw err;
@@ -127,7 +127,10 @@ exports.UpdateEmployeeDocument = async (req, res) => {
         const filename = path.join("./uploads", updateddocument.file_path);
         // ✅ DO NOT SEND RESPONSE HERE
         fs.unlink(filename, (err) => {
-          if (err) console.log("File delete error:", err.message);
+          if (err) 
+            {
+              throw err;
+            };
         });
       }
       req.body.file_path = req.file.filename;
@@ -135,6 +138,9 @@ exports.UpdateEmployeeDocument = async (req, res) => {
     res.status(200).json({ message: "Document updated successfully", updateddocument })
 
   } catch (ERROR) {
-    CONSOLE.LOG(ERROR)
+    res.status(500).json({
+      message: "Server Error",
+      error: ERROR.message
+    });
   }
 }

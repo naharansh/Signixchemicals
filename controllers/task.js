@@ -33,7 +33,7 @@ exports.AllTask = async (req, res) => {
 exports.Task = async (req, res) => {
     try {
         const { id } = req.params
-        // console.log("DFDFD")
+       
         if (!id || !isUUID(id)) {
           
             return res.status(400).json({
@@ -41,14 +41,14 @@ exports.Task = async (req, res) => {
             });
         }
         const user = await modules.findById(id).populate('created_by').populate('dealer_id')
-           console.log(user)
+         
         if (!user) {
             return res.status(404).json({ message: 'task  does not found' })
         }
         res.status(200).json({ message: 'task', user })
 
     } catch (error) {
-          console.log(error.message)
+        res.status(500).json({ message: 'some error is occured', error: error.message })
     }
 }
 exports.UpdateTask = async (req, res) => {

@@ -11,7 +11,7 @@ exports.userAuth = async (req, res, next) => {
         req.user = result;
         next();
     } catch (error) {
-        console.error(error);
+      
         return res.status(400).json({
             message: 'Invalid token'
         });

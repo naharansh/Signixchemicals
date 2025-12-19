@@ -39,7 +39,7 @@ exports.GetOrders = async (req, res) => {
         }
         res.status(200).json({ message: 'all orders', Allorders })
     } catch (error) {
-        console.log(error)
+       
         res.status(500).json({ message: 'some error is occured', err: error.message })
     }
 
@@ -80,7 +80,7 @@ exports.UpdateOrders = async (req, res) => {
         }
         res.status(200).json({ message: 'updated order', result })
     } catch (error) {
-        console.log(error)
+
         res.status(500).json({ message: 'some error is occured', err: error.message })
     }
 }

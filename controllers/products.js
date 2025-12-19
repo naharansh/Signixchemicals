@@ -2,7 +2,7 @@ const modules=require('../modules/product.js')
 const categories=require('../modules/categories.js')
 exports.CreateProduct=async (req,res) => {
     try {
-                console.log(req.body)
+      
         const{category_id,product_name,price,gst,stock}=req.body
 
         if(!category_id||!product_name||!price||!gst||!stock)

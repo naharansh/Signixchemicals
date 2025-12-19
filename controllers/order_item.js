@@ -4,7 +4,7 @@ const orders = require('../modules/order')
 
 exports.CreatePermission = async (req, res) => {
     try {
-    //    console.log(product_id.)
+   
         const { price, quantity, gst, order_id, product_id } = req.body
         if (!price || !quantity || !gst || !order_id || !product_id) {
             return res.status(404).json({ message: 'fields is required' })

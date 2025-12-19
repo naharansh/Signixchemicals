@@ -50,7 +50,7 @@ exports.UpdateUser = async (req, res) => {
             return res.status(404).json({ message: 'id does not found in the routes' })
         }
         const result = await modules.findById(id);
-        console.log(result)
+
         if (!result) {
             return res.status(404).json({ message: 'user  does not found' })
         }

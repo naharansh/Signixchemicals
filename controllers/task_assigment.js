@@ -5,7 +5,6 @@ const task=require('../modules/task.js')
 const { validate: isUUID } = require("uuid");
 exports.CreateAssignment = async (req, res) => {
     try {
-        console.log(req.body)
         const { task_id, employee_id,department_id, completion_percentage, completed_at } = req.body
         if (!task_id|| !employee_id||!department_id||!completion_percentage||!completed_at) {
             return res.status(404).json({ message: 'fields are empty' })

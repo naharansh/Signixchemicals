@@ -10,7 +10,7 @@ exports.CreateRole=async (req,res) => {
             return res.status(404).json({message:'fields are required'})
         }
         const user=await roles.findOne({role_name})
-        console.log(user)
+       
         if(user)
         {
             return res.status(404).json({message:'role exist in the database'})

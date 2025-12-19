@@ -15,7 +15,7 @@ exports.CretePermission=async (req,res) => {
                 res.status(404).json({message:'fields are not exist'})
             }
             const result=await permissions.create({role_id,permission_id})
-            console.log(result)
+        
             res.status(200).json({
                 result
             })

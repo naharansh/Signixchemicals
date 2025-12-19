@@ -35,7 +35,7 @@ exports.GetAllEmployees = async (req, res) => {
 exports.CreateEmployeeID = async (req, res) => {
     try {
         const { id } = req.params
-        console.log(id)
+
         if (!id || !isUUID(id)) {
             return res.status(400).json({
                 message: "Invalid department UUID"

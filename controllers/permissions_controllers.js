@@ -106,7 +106,7 @@ exports.UpdatePermission = async (req, res) => {
             context: "query"
         }
         )
-        console.log(updatepermission)
+
         return res.status(200).json({ message: 'permission is updated', updatepermission })
     } catch (error) {
         return res.status(500).json({ message: 'some error is occured', err: error.message })
