@@ -84,4 +84,4 @@ const employee = new Schema({
     {
         timestamps: true // creates createdAt & updatedAt
     })
-module.exports = mongoose.model('emp',employee)
+module.exports = mongoose.model('emps',employee)

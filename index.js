@@ -1,7 +1,12 @@
 const express = require('express')
 const dotenv = require('dotenv').config({ path: './config/config.env' })
 var cookieParser = require('cookie-parser')
+const path = require('path')
 const app = express()
+app.use(
+  "/uploads",
+  express.static(path.join(__dirname, "uploads"))
+);
 app.use(cookieParser())
 // routes called
 const routes = require('./routers/routes.js')
@@ -25,10 +30,16 @@ const task=require('./routers/task.js')
 const assignment=require('./routers/assignment.js')
 const daily_summery=require('./routers/daily_summery.js')
 const task_update=require('./routers/task_updates.js')
-const emps=require('./routers/employees.js')
+// const emps=require('./routers/employees.js')
 // ================= Employee Management Tables=====
 const role=require('./routers/role.js')
 const e_department=require('./routers/e_department.js')
+const emps=require('./routers/emp.js')
+const document=require('./routers/employee_document.js')
+// ========================= Leave Management Tables====
+const leave=require('./routers/leave_request.js')
+const leave_balence=require('./routers/leave_balence.js')
+const leave_type=require('./routers/leave_types.js')
 app.use(express.json())
 // API EndPoints
 app.use('/api/', routes)
@@ -54,7 +65,11 @@ app.use('/tasks_updates/',task_update)
  app.use("/role/", roles);
  app.use("/e_departemnt/",e_department)
  app.use('/emp/',emps)
-
+app.use('/document/',document)
+// ========================= Leave Management Tables
+app.use('/leave/',leave)
+app.use('/leave_balence/',leave_balence)
+app.use('/leave_types/',leave_type)
 // connections
 connections()
 // Server
