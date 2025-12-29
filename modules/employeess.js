@@ -8,80 +8,87 @@ const employee = new Schema({
         unique: true,
         required: true
     },
-    employee_code: {
+    companyName: {
         type: String,
         required: true,
         unique: true,
         trim: true,
     },
 
-    first_name: {
+    companyType: {
         type: String,
         required: true,
         trim: true,
     },
 
-    last_name: {
+    sector: {
         type: String,
         required: true,
         trim: true,
     },
+    status:{
+        type:String,
+        enum:['active','inactive'],
+        default:'active'
+    },
 
+    addressLine1: {
+        type: String,
+        required: true,
+
+    },
+
+    addressLine2: {
+        type: String,
+        required: true,
+        trim: true
+    },
+
+    city: {
+        type: String,
+        required: true
+    },
+
+    state: {
+        type: String,
+
+    },
+
+    country: {
+        type: String,
+        
+    },
+
+    primaryPhone: {
+        type: String,
+        minLength:[10,'check the number']
+
+        },
+
+    password: {
+        type: String,
+        required: true
+    },
+    secondaryPhone: {
+        type: String,
+    },
     email: {
         type: String,
-        required: true,
         unique: true,
-        lowercase: true,
-        trim: true
-    },
-
-    mobile: {
-        type: String,
         required: true,
-        trim: true
     },
-
-    password_hash: {
+    website: {
         type: String,
-        required: true
+        unique: true,
+        required: true,
     },
-
-    role_id: {
-        type: String,
-        ref: "roled",
-        required: true
-    },
-
-    department_id: {
-        type: String,
-        ref: "e_departments",
-        required: true
-    },
-
-    reporting_manager_id: {
-        type: String,
-        ref: "employee",
-        default: null
-    },
-
-    date_of_joining: {
-        type: Date,
-        required: true
-    },
-
-    employment_type: {
-        type: String,
-        enum: ["Full-time", "Part-time", "Contract"],
-        required: true
-    },
-
-    status: {
-        type: String,
-        enum: ["Active", "Inactive", "Resigned"],
-        default: "Active"
+    file_path:{
+        type:String,
     }
+
+
 },
     {
         timestamps: true // creates createdAt & updatedAt
     })
-module.exports = mongoose.model('emps',employee)
+module.exports = mongoose.model('emps', employee)

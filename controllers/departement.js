@@ -2,7 +2,8 @@ const modules = require('../modules/department.js')
 const { validate: isUUID } = require("uuid");
 exports.CreateDepartment = async (req, res) => {
     try {
-        const { department_name } = req.body
+        const { department_name,description, subCategories } = req.body
+
         if (!department_name) {
             return res.status(404).json({ message: 'department_name is requried' })
         }
@@ -10,7 +11,7 @@ exports.CreateDepartment = async (req, res) => {
         if (data) {
             return res.status(404).json({ message: 'department is exist ' })
         }
-        const result = await modules.create({ department_name })
+        const result = await modules.create({ department_name,description })
         res.status(200).json({ message: 'department_name', result })
 
 
@@ -41,6 +42,7 @@ exports.GetDepartment = async (req, res) => {
         if (!result) {
             return res.status(404).json({ message: 'department does not exists' })
         }
+        console.log(result)
         res.status(200).json({ message: 'department is', result })
 
     } catch (error) {
@@ -49,6 +51,8 @@ exports.GetDepartment = async (req, res) => {
 }
 exports.UpdateDepartment = async (req, res) => {
     try {
+    
+
         const { id } = req.params
         if (!id || !isUUID(id)) {
             return res.status(400).json({
@@ -62,8 +66,9 @@ exports.UpdateDepartment = async (req, res) => {
         const updated_department = await modules.findByIdAndUpdate(id, req.body, {
             new: true,
             runValidators: true,
-            context: "query"
+            
         })
+        console.log("sd"+updated_department)
         if (!updated_department) {
             return res.status(404).json({ message: 'data cannot be updated' })
         }

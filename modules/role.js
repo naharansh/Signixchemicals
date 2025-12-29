@@ -9,18 +9,17 @@ const Role=new Schema({
         required:true
 
     },
-   role_name: {
-    type: String,
-    enum: ['Admin', 'HR', 'Manager'],
-    required: true
-},
+ role_name: { type: String, required: true, trim: true },
 
-    description:{
-        type:String,
 
-    }, 
+
+    description: { type: String, default: "" },
+    parentCategory: { type: String, ref: "depart", required: true },
+
     
-},  {
+},  
+
+ {
     timestamps: true, // creates created_at & updated_at
     versionKey: false,
   })

@@ -1,40 +1,44 @@
 const connections = require('../modules/userlogin.js')
 // const roles=require('../')
 const bycrypt = require('bcrypt')
+// co
 const jwt = require('jsonwebtoken')
 const generatesOTP = () => {
-     const otp =  Math.floor(100000 + Math.random() * 900000).toString();
+  const otp = Math.floor(100000 + Math.random() * 900000).toString();
   return otp
 
 }
 const generateToken = async (user) => {
   user.last_login = Date.now()
-    await user.save()
+  await user.save()
   return await jwt.sign({ id: user._id, password: user.pass, role: user.role }, process.env.SECREAT_KEY)
 }
 
-exports.RegisterUser = async (req,res) => {
+exports.RegisterUser = async (req, res) => {
   try {
+    console.log(req.body)
 
-    const {  password,email,name,phone,role_id,department } = req.body
+    const { employee_code,first_name,last_name,date_of_joining,employment_type,email,phone,password,role_id,department } = req.body
     const finduser = await connections.findOne({ email })
-   
+
     if (finduser) {
       return res.status(404).json({
         message: 'user exisit'
       })
     }
-    
+
     const result = await bycrypt.genSalt(10)
-    
+
     const hashpassword = await bycrypt.hash(password, result)
-    const createuser = await connections.create({ email, password: hashpassword,name,phone,role_id,department})
-    // await createuser.save()
+    const createuser = await connections.create({ employee_code,first_name,last_name,date_of_joining,email,phone,password:hashpassword,role_id,department  })
+    await createuser.save()
+
     res.status(201).json({
       message: 'user is created',
       createuser
     })
   } catch (error) {
+    console.log(error)
     res.status(505).json({
       message: 'failed to create user',
       error
@@ -44,7 +48,7 @@ exports.RegisterUser = async (req,res) => {
 
 exports.UserLogin = async (req, res) => {
   try {
-   
+
     const { email, password } = req.body
     if (!email && !password) {
       return res.status(404).json({
@@ -53,9 +57,9 @@ exports.UserLogin = async (req, res) => {
     }
 
     const user = await connections.findOne({ email: email })
-  
+
     if (!user) {
-      return res.status(500).json({
+      return res.status(404).json({
         message: 'user not found'
 
       })
@@ -73,132 +77,145 @@ exports.UserLogin = async (req, res) => {
 
       })
     }
-     const otps =generatesOTP()
+    const otps = generatesOTP()
     user.otp = otps
     user.otp_expiry = Date.now() + 5 * 60 * 1000;
     await user.save();
-    
+    console.log(email)
+    res.cookie("otp_email", email, {
+  httpOnly: true,       // safer, prevents JS access
+  secure: true,         // required with SameSite=None
+  sameSite: "None",     // must be None for cross-site
+  maxAge: 5 * 60 * 1000
+});
+
+    // console.log(r)
     return res.status(200).json({
       message: 'Login successful',
       user
     })
   } catch (error) {
+    console.log(error)
     res.status(505).json({
-      message:'some error is occured',
-      error:error.message
+      message: 'some error is occured',
+      error: error.message
     })
   }
 }
 
 exports.VerfiyOTP = async (req, res) => {
   try {
-   
-    const { email, otp } = req.body
+
+    const { otp } = req.body;
+    console.log(otp)
+    const email = req.cookies.otp_email
+    console.log(email)
     const user = await connections.findOne({ email })
-   
+    console.log(user)
+
     if (!user) {
       res.status(404).json({
         message: 'user does not found'
       })
     }
-    if (user.otp == undefined )
-    {
+    if (user.otp == undefined) {
       return res.status(404).json({
-        message:'otp is required'
+        message: 'otp is required'
       })
     }
-     if (!user || user.otp !== otp || user.otpExpiry < Date.now()) {
-    return res.status(400).json({ message: "Invalid or expired OTP" });
-  }
+    if (!user || user.otp !== otp || user.otp_expiry < Date.now()) {
+      return res.status(400).json({ message: "Invalid or expired OTP" });
+    }
 
-  user.otp = undefined;
-  user.otp_expiry = undefined;
-   await user.save();
- const token = await generateToken(user)
-  
+    user.otp = undefined;
+    user.otp_expiry = undefined;
+    res.clearCookie("otp_email", {
+      httpOnly: true,
+      secure: false,
+      sameSite: "lax"
+    });
+
+
+    await user.save();
+    const token = await generateToken(user)
+console.log("Setting cookie...");
+
     res.cookie("token", token, {
       httpOnly: true,
       secure: true,
       sameSite: "strict"
 
     })
+    console.log("Sending response...");
+
     res.status(200).json({
-      message:"welcome to  the user"
+      message: "welcome to  the user"
     })
   } catch (error) {
     res.status(400).json({ error: error.message })
   }
 }
-exports.Getusers=async(req,res)=>{
+exports.Getusers = async (req, res) => {
   try {
-    const result=await connections.find().populate('role_id').populate('department')
-    if(result.length === 0)
-    {
-      return res.status(404).json({message:'users does not exists'})
+    const result = await connections.find().populate('role_id').populate('department')
+    if (result.length === 0) {
+      return res.status(404).json({ message: 'users does not exists' })
     }
-    res.status(200).json({message:'All users',result})
+    res.status(200).json({ message: 'All users', result })
   } catch (error) {
-    res.status(500).json({message:'some error occured',err:error.messsage})
+    res.status(500).json({ message: 'some error occured', err: error.messsage })
   }
 }
-exports.Getuser=async(req,res)=>{
+exports.Getuser = async (req, res) => {
   try {
-    const id=req.params.id;
-    if(!id)
-    {
-      return res.status(404).json({message:'user does not exists'})
+    const id = req.params.id;
+    if (!id) {
+      return res.status(404).json({ message: 'user does not exists' })
     }
-    const result=await connections.findById(id).populate('role_id').populate('department')
-    if(!result)
-    {
-      return res.status(404).json({message:'users does not exists'})
+    const result = await connections.findById(id).populate('role_id').populate('department')
+    if (!result) {
+      return res.status(404).json({ message: 'users does not exists' })
     }
-    res.status(200).json({message:'user',result})
+    res.status(200).json({ message: 'user', result })
   } catch (error) {
-    res.status(500).json({message:'some error occured',err:error.messsage})
+    res.status(500).json({ message: 'some error occured', err: error.messsage })
   }
 }
-exports.Updateuser=async(req,res)=>{
+exports.Updateuser = async (req, res) => {
   try {
-    const id=req.params.id;
-    if(!id)
-    {
-      return res.status(404).json({message:'user_id does not exists'})
+    const id = req.params.id;
+    if (!id) {
+      return res.status(404).json({ message: 'user_id does not exists' })
     }
-    const data=await connections.findById(id)
-    if(!data)
-    {
-      return res.status(404).json({message:'users does not exists'})
+    const data = await connections.findById(id)
+    if (!data) {
+      return res.status(404).json({ message: 'users does not exists' })
     }
-    const result=await connections.findByIdAndUpdate(id,req.body,{new:true,runValidators:true,context: "query"})
-    if(!result)
-    {
-      return res.status(404).json({message:'data has not updated'})
+    const result = await connections.findByIdAndUpdate(id, req.body, { new: true, runValidators: true, context: "query" })
+    if (!result) {
+      return res.status(404).json({ message: 'data has not updated' })
     }
-    res.status(200).json({message:'Updateduser',result})
+    res.status(200).json({ message: 'Updateduser', result })
   } catch (error) {
-    res.status(500).json({message:'some error occured',err:error.messsage})
+    res.status(500).json({ message: 'some error occured', err: error.messsage })
   }
 }
-exports.Deleteuser=async(req,res)=>{
+exports.Deleteuser = async (req, res) => {
   try {
-    const id=req.params.id;
-    if(!id)
-    {
-      return res.status(404).json({message:'user_id does not exists'})
+    const id = req.params.id;
+    if (!id) {
+      return res.status(404).json({ message: 'user_id does not exists' })
     }
-    const data=await connections.findById(id)
-    if(!data)
-    {
-      return res.status(404).json({message:'users does not exists'})
+    const data = await connections.findById(id)
+    if (!data) {
+      return res.status(404).json({ message: 'users does not exists' })
     }
-    const result=await connections.findByIdAndDelete(id)
-    if(!result)
-    {
-      return res.status(404).json({message:'data has not deleted'})
+    const result = await connections.findByIdAndDelete(id)
+    if (!result) {
+      return res.status(404).json({ message: 'data has not deleted' })
     }
-    res.status(200).json({message:'userdeleted'})
+    res.status(200).json({ message: 'userdeleted' })
   } catch (error) {
-    res.status(500).json({message:'some error occured',err:error.messsage})
+    res.status(500).json({ message: 'some error occured', err: error.messsage })
   }
 }

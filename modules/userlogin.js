@@ -6,13 +6,42 @@ const userTable = new Schema({
     _id: {
         type: String,
         default: uuidv4,
-        unique: true
+        unique: true,
+        required: true
     },
-    name: {
+    employee_code: {
+        type: String,
+        required: true,
+        unique: true,
+        trim: true,
+    },
+
+    first_name: {
         type: String,
         required: true,
         trim: true,
-        minlength: 2
+    },
+
+    last_name: {
+        type: String,
+        required: true,
+        trim: true,
+    },
+    date_of_joining: {
+        type: Date,
+        required: true
+    },
+
+    employment_type: {
+        type: String,
+        enum: ["Full-time", "Part-time", "Contract"],
+        // required: true
+    },
+
+    status: {
+        type: String,
+        enum: ["Active", "Inactive", "Resigned"],
+        default: "Active"
     },
     email: {
         type: String,
@@ -25,28 +54,24 @@ const userTable = new Schema({
         type: String,
         trim: true,
     },
-    status: {
-        type: String,
-        enum: ["active", "inactive"],
-        default: "active"
-    },
+
     password: {
         type: String,
         required: true,
         minlength: 6
     },
     role_id: {
-        type: String,        
-        required: true,
+        type: String,
+
         index: true,
-        ref: 'Role'     
+        ref: 'Role'
     },
-    department:{
-         type: String,        
-        required: true,
+    department: {
+        type: String,
+
         index: true,
-        ref: 'Departments'  
-    }, 
+        ref: 'Departments'
+    },
     last_login: {
         type: Date,
         default: undefined
@@ -63,6 +88,6 @@ const userTable = new Schema({
 }, {
     timestamps: true,
     versionKey: false,
-    _id: false 
+    _id: false
 })
-module.exports=mongoose.model('users',userTable)
+module.exports = mongoose.model('users', userTable)

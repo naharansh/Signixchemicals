@@ -12,7 +12,14 @@ const department= new mongoose.Schema({
         required: true,
         trim: true,
         minlength: 2
-    }
+    },
+
+    description:{
+        type:String,
+        
+    },
+     subCategories: [{ type: String, ref: "roled" }],
+
 
 
 },{

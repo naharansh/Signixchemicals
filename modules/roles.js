@@ -11,7 +11,7 @@ const roles = new Schema({
     },
     role_name:{
         type:String,
-        enum:['Manager','Sales','HR'],
+        enum:['Manager','Sales','HR','Admin',],
         required:true
     },
     description:{

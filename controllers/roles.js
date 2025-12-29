@@ -1,11 +1,12 @@
 const roles=require('../modules/role.js')
+const category=require('../modules/department.js')
 const { validate: isUUID } = require("uuid");
-exports.CreateRole=async (req,res) => {
+exports.    CreateRole=async (req,res) => {
     try {
         const{role_name,
-            description
+            description,parentCategory
         }=req.body
-                if(!role_name)
+                if(!role_name||!parentCategory)
         {
             return res.status(404).json({message:'fields are required'})
         }
@@ -15,7 +16,12 @@ exports.CreateRole=async (req,res) => {
         {
             return res.status(404).json({message:'role exist in the database'})
         }
-        const roless=await roles.create({role_name,description})
+        const fcate=await category.findById(parentCategory)
+        if(!fcate)
+        {
+            return res.status(404).json({message:'main category does not exist'})
+        }
+        const roless=await roles.create({role_name,description,parentCategory})
         res.status(200).json({message:'role is created',roless})
     } catch (error) {
         console.log(error)
@@ -35,19 +41,19 @@ exports.GetRoles=async (req,res) => {
         return res.status(500).json({message:"some error is occured",error:error.message})
     }
 }
-exports.GetRoles=async (req,res) => {
-    try{
-        const result=await roles.find()
-        if(result.length === 0)
-        {
-            return res.status(404).json({message:'roles does not exist'})
-        }
-        res.status(200).json({message:'all roles',result})
-    }catch(error)
-    {
-        return res.status(500).json({message:"some error is occured",error:error.message})
-    }
-}
+// exports.GetRoles=async (req,res) => {
+//     try{
+//         const result=await roles.find()
+//         if(result.length === 0)
+//         {
+//             return res.status(404).json({message:'roles does not exist'})
+//         }
+//         res.status(200).json({message:'all roles',result})
+//     }catch(error)
+//     {
+//         return res.status(500).json({message:"some error is occured",error:error.message})
+//     }
+// }
 exports.GetRole=async (req,res) => {
     try {
         const {id}=req.params
@@ -57,7 +63,9 @@ exports.GetRole=async (req,res) => {
                         message: "Invalid department UUID"
                     });
                 }
-                const role=await roles.findById(id)
+                const role=await roles.find({
+parentCategory:id
+})
                 if(!role)
                 {
                     return res.status(404).json({message:'role does not found'})

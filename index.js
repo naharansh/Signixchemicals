@@ -1,13 +1,20 @@
 const express = require('express')
 const dotenv = require('dotenv').config({ path: './config/config.env' })
 var cookieParser = require('cookie-parser')
+const cors=require('cors')
 const path = require('path')
 const app = express()
 app.use(
   "/uploads",
   express.static(path.join(__dirname, "uploads"))
 );
+app.use(express.json())
 app.use(cookieParser())
+app.use(express.static('../uploads'))
+app.use(cors({
+    origin: "http://localhost:5173", // frontend URL
+    credentials: true               // 🔥 REQUIRED FOR COOKIES
+  }))
 // routes called
 const routes = require('./routers/routes.js')
 const roles = require("./routers/roles.js")
@@ -46,7 +53,8 @@ const assignment_logs = require('./routers/attenend_logs.js')
 //============================= Optional Supporting Tables
 const optional=require('./routers/employee_locations.js')
 const optionals=require('./routers/attendence_exports.js')
-app.use(express.json())
+
+
 // API EndPoints
 app.use('/api/', routes)
 app.use("/roleapi/", role);
@@ -70,7 +78,7 @@ app.use('/tasks_updates/',task_update)
  // ================= Employee Management Tables=====
  app.use("/role/", roles);
  app.use("/e_departemnt/",e_department)
- app.use('/emp/',emps)
+ app.use('/company/',emps)
 app.use('/document/',document)
 // ========================= Leave Management Tables
 app.use('/leave/',leave)
