@@ -18,7 +18,13 @@ const department= new mongoose.Schema({
         type:String,
         
     },
-     subCategories: [{ type: String, ref: "roled" }],
+     subCategories: { type: String, ref: "roled" },
+     status:{
+        type:String,
+        enum:['Active','inactive'],
+        default:'Active'
+     }
+     
 
 
 

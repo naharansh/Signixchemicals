@@ -30,8 +30,15 @@ exports.    CreateRole=async (req,res) => {
 }
 exports.GetRoles=async (req,res) => {
     try{
-        const result=await roles.find()
-        if(result.length === 0)
+        const {id}=req.params
+          if (!id || !isUUID(id)) {
+                  
+                    return res.status(400).json({
+                        message: "Invalid department UUID"
+                    });
+                }
+        const result=await roles.findById(id)
+        if(!result)
         {
             return res.status(404).json({message:'roles does not exist'})
         }
@@ -41,19 +48,7 @@ exports.GetRoles=async (req,res) => {
         return res.status(500).json({message:"some error is occured",error:error.message})
     }
 }
-// exports.GetRoles=async (req,res) => {
-//     try{
-//         const result=await roles.find()
-//         if(result.length === 0)
-//         {
-//             return res.status(404).json({message:'roles does not exist'})
-//         }
-//         res.status(200).json({message:'all roles',result})
-//     }catch(error)
-//     {
-//         return res.status(500).json({message:"some error is occured",error:error.message})
-//     }
-// }
+
 exports.GetRole=async (req,res) => {
     try {
         const {id}=req.params
@@ -79,6 +74,7 @@ parentCategory:id
 exports.UpdateRole=async (req,res) => {
     try {
         const {id}=req.params
+        console.log(req.body)
           if (!id || !isUUID(id)) {
                   
                     return res.status(400).json({
@@ -93,7 +89,7 @@ exports.UpdateRole=async (req,res) => {
                 const role=await roles.findByIdAndUpdate(id,req.body,{
                     new:true,
                     runValidators:true,
-                    context:"query"
+                   
                 })
 
                 res.status(200).json({message:'role is found',role})
